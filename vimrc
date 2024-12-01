@@ -2,7 +2,8 @@ set number
 set noswapfile
 
 " color habamax
-color solarized
+" color solarized
+color gruvbox
 set background=dark
 "set background=light
 
