@@ -1,110 +1,77 @@
+" General Settings
 set number
 set noswapfile
-
-" color habamax
-" color solarized
-color gruvbox
 set background=dark
-"set background=light
+set cursorline
+set spell
+set is
+set ruler
 
-syntax on
-
-filetype plugin indent on
+" Indentation and Formatting
 set tabstop=4
 set shiftwidth=4
+set ai
 
+" Search Behavior
+set ignorecase
+set smartcase
 set wildmenu
-set hidden
-
 set wildignore=*.exe,*.dll,*.pdb
 
-set guifont=Cascadia_Mono:h24
-
+" GUI Options
 set guioptions-=m
 set guioptions-=T
 set guioptions-=r
 
-set cursorline
+" Syntax and Filetype Support
+syntax on
+filetype plugin indent on
 
-function InitLspPlugins()
-	call plug#begin('~/vimplugins')
+" Leader Key
+let mapleader=' '
 
-	Plug 'prabirshrestha/asyncomplete.vim'
-	Plug 'prabirshrestha/vim-lsp'
-	Plug 'prabirshrestha/asyncomplete-lsp.vim'
-	Plug 'mattn/vim-lsp-settings'
+" Colorscheme
+color habamax
 
-	call plug#end()
-endfunction
+" Plugin Manager Installation
+let data_dir = has('nvim') ? stdpath('data') . '/site' : '~/.vim'
+if empty(glob(data_dir . '/autoload/plug.vim'))
+  silent execute '!curl -fLo '.data_dir.'/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+endif
 
-" If you want just a simple Vim config with no plugins, just comment the
-" following line
-call InitLspPlugins()
+" Plugins
+call plug#begin('~/vimplugins')
+Plug 'prabirshrestha/asyncomplete.vim'
+Plug 'prabirshrestha/vim-lsp'
+Plug 'prabirshrestha/asyncomplete-lsp.vim'
+Plug 'mattn/vim-lsp-settings'
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'junegunn/fzf.vim'
+call plug#end()
 
-" By default I want no LSP, sometimes when needed, I can simply call StartLsp
-" to start it
-"
-"
+" Auto-completion Mappings
 imap <c-space> <Plug>(asyncomplete_force_refresh)
 inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
 inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
 inoremap <expr> <cr> pumvisible() ? "\<C-y>\<cr>" : "\<cr>"
 autocmd! CompleteDone * if pumvisible() == 0 | pclose | endif
 
-"
-"
-function! OnLspBufferEnabled() abort
-    setlocal omnifunc=lsp#complete
-    setlocal signcolumn=yes
-    nmap <buffer> gi <plug>(lsp-definition)
-    nmap <buffer> gd <plug>(lsp-declaration)
-    nmap <buffer> gr <plug>(lsp-references)
-    nmap <buffer> gl <plug>(lsp-document-diagnostics)
-    nmap <buffer> <f2> <plug>(lsp-rename)
-    nmap <buffer> <f3> <plug>(lsp-hover)
-endfunction
+" LSP Configuration
+setlocal omnifunc=lsp#complete
+setlocal signcolumn=yes
+nmap <buffer> gi <plug>(lsp-definition)
+nmap <buffer> gd <plug>(lsp-declaration)
+nmap <buffer> gr <plug>(lsp-references)
+nmap <buffer> gl <plug>(lsp-document-diagnostics)
+nmap <buffer> <f2> <plug>(lsp-rename)
+nmap <buffer> <f3> <plug>(lsp-hover)
 
-augroup lsp_install
-  au!
-  autocmd User lsp_buffer_enabled call OnLspBufferEnabled()
-augroup END
+" FZF Keybindings
+nnoremap <silent> <leader>/ :Rg<CR>
+nnoremap <silent> <leader><space> :Files<CR>
 
-" rust setup
-if executable('rust-analyzer')
-  au User lsp_setup call lsp#register_server({
-        \   'name': 'Rust Language Server',
-        \   'cmd': {server_info->['rust-analyzer']},
-        \   'whitelist': ['rust'],
-        \ })
-endif
-
-if executable('rust-analyzer')
-  au User lsp_setup call lsp#register_server({
-        \   'name': 'Rust Language Server',
-        \   'cmd': {server_info->['rust-analyzer']},
-        \   'whitelist': ['rust'],
-        \   'initialization_options': {
-        \     'cargo': {
-        \       'buildScripts': {
-        \         'enable': v:true,
-        \       },
-        \     },
-        \     'procMacro': {
-        \       'enable': v:true,
-        \     },
-        \   },
-        \ })
-endif
-
-set spell
-
-set is
-
-set ignorecase
-set smartcase
-
+" Additional Features
 set gp=git\ grep\ -n
-set ruler
-
 packadd! matchit
 
