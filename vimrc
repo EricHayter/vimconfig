@@ -1,3 +1,4 @@
+color default 
 " General Settings
 set number
 set noswapfile
@@ -23,6 +24,8 @@ set guioptions-=m
 set guioptions-=T
 set guioptions-=r
 
+set statusline=\ %{HasPaste()}%F%m%r%h\ %w\ \ CWD:\ %r%{getcwd()}%h\ \ \ Line:\ %l\ \ Column:\ %c
+
 " Syntax and Filetype Support
 syntax on
 filetype plugin indent on
@@ -30,14 +33,16 @@ filetype plugin indent on
 " Leader Key
 let mapleader=' '
 
-" Colorscheme
-color habamax
-
 " Plugin Manager Installation
 let data_dir = has('nvim') ? stdpath('data') . '/site' : '~/.vim'
 if empty(glob(data_dir . '/autoload/plug.vim'))
   silent execute '!curl -fLo '.data_dir.'/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
   autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+endif
+
+" Ensure ripgrep is installed
+if empty(glob('/usr/bin/rg')) && empty(glob('/usr/local/bin/rg'))
+  silent execute '!git clone https://github.com/BurntSushi/ripgrep.git ~/ripgrep && cd ~/ripgrep && cargo build --release && sudo mv target/release/rg /usr/local/bin/'
 endif
 
 " Plugins
@@ -48,6 +53,7 @@ Plug 'prabirshrestha/asyncomplete-lsp.vim'
 Plug 'mattn/vim-lsp-settings'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
+Plug 'tpope/vim-fugitive'
 call plug#end()
 
 " Auto-completion Mappings
@@ -66,6 +72,8 @@ nmap <buffer> gr <plug>(lsp-references)
 nmap <buffer> gl <plug>(lsp-document-diagnostics)
 nmap <buffer> <f2> <plug>(lsp-rename)
 nmap <buffer> <f3> <plug>(lsp-hover)
+
+" let g:lsp_diagnostics_enabled = 0 " disable diagnostics support
 
 " FZF Keybindings
 nnoremap <silent> <leader>/ :Rg<CR>
