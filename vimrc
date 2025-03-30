@@ -83,3 +83,5 @@ nnoremap <silent> <leader><space> :Files<CR>
 set gp=git\ grep\ -n
 packadd! matchit
 
+let g:lsp_diagnostics_enabled = 1 " enable/disable diagnostics support
+
