@@ -42,6 +42,11 @@ if empty(glob(data_dir . '/autoload/plug.vim'))
   autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
 endif
 
+" Install ripgrep
+if empty(glob('/usr/bin/rg')) && empty(glob('/usr/local/bin/rg'))
+  silent execute 'sudo apt-get install ripgrep'
+endif
+
 " Plugins
 call plug#begin('~/vimplugins')
 Plug 'prabirshrestha/asyncomplete.vim'
